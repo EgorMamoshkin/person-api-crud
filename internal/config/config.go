@@ -1,6 +1,7 @@
 package config
 
 import (
+	"errors"
 	"fmt"
 	"github.com/spf13/viper"
 )
@@ -34,11 +35,31 @@ func Init() (*Config, error) {
 		return nil, fmt.Errorf("can't read env: %w", err)
 	}
 
+	dbPath := viper.GetString("db_path")
+	if dbPath == "" {
+		return nil, errors.New("please specify env DB_PATH")
+	}
+
+	dbUser := viper.GetString("db_user")
+	if dbUser == "" {
+		return nil, errors.New("please specify env DB_USER")
+	}
+
+	dbPass := viper.GetString("db_pass")
+	if dbPass == "" {
+		return nil, errors.New("please specify env DB_PASS")
+	}
+
+	apiServAddr := viper.GetString("api_serv_addr")
+	if apiServAddr == "" {
+		return nil, errors.New("please specify env API_SERV_ADDR")
+	}
+
 	cfg := Config{
-		DBPath:      viper.GetString("db_path"),
-		DBUser:      viper.GetString("db_user"),
-		DBPass:      viper.GetString("db_pass"),
-		ApiServAddr: viper.GetString("api_serv_addr"),
+		DBPath:      dbPath,
+		DBUser:      dbUser,
+		DBPass:      dbPass,
+		ApiServAddr: apiServAddr,
 	}
 
 	return &cfg, nil

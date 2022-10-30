@@ -68,7 +68,7 @@ func (ph *PersonHandler) StorePerson(c echo.Context) error {
 		return c.JSON(http.StatusNotImplemented, err.Error())
 	}
 
-	return c.JSON(http.StatusCreated, person)
+	return c.JSON(http.StatusOK, person)
 }
 
 func (ph *PersonHandler) GetPerson(c echo.Context) error {

@@ -14,7 +14,6 @@ type Config struct {
 }
 
 func Init() (*Config, error) {
-
 	err := viper.BindEnv("db_path")
 	if err != nil {
 		return nil, fmt.Errorf("can't read env: %w", err)

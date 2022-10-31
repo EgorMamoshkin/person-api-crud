@@ -32,7 +32,7 @@ func (p *PerLogic) StorePerson(ctx context.Context, per *app.Person) error {
 	return p.perRepo.Store(ctx, per)
 }
 
-func (p *PerLogic) DeletePerson(ctx context.Context, id int) error { //TODO
+func (p *PerLogic) DeletePerson(ctx context.Context, id int) error {
 	ctx, cancel := context.WithTimeout(ctx, p.ctxTimeout)
 	defer cancel()
 
@@ -71,7 +71,19 @@ func (p *PerLogic) UpdatePerson(ctx context.Context, per *app.Person) error {
 	return p.perRepo.Update(ctx, per)
 }
 
-func (p *PerLogic) isEmailExist(ctx context.Context, email string, id int) (bool, error) { //TODO
+func (p *PerLogic) GetPersonList(ctx context.Context, offsetId int, batchSize int) ([]app.Person, error) {
+	ctx, cancel := context.WithTimeout(ctx, p.ctxTimeout)
+	defer cancel()
+
+	personList, err := p.perRepo.GetPersonList(ctx, offsetId, batchSize)
+	if err != nil {
+		return nil, fmt.Errorf("getting persons list failed: %w", err)
+	}
+
+	return personList, nil
+}
+
+func (p *PerLogic) isEmailExist(ctx context.Context, email string, id int) (bool, error) {
 	per, err := p.perRepo.GetByEmail(ctx, email, id)
 	if err != nil {
 		return false, err

@@ -77,6 +77,7 @@ func (r *PSQLRepo) GetByID(ctx context.Context, id int) (*app.Person, error) {
 
 	res, err := r.session.Select("*").From("person").
 		Where("id = ?", id).LoadContext(ctx, &person)
+
 	if err != nil {
 		return nil, fmt.Errorf("can't get person: %w", err)
 	}
@@ -99,6 +100,23 @@ func (r *PSQLRepo) GetByEmail(ctx context.Context, email string, id int) (*app.P
 	}
 
 	return &person, nil
+}
+
+func (r *PSQLRepo) GetPersonList(ctx context.Context, id int, batchSize int) ([]app.Person, error) {
+	personList := make([]app.Person, 0, batchSize)
+
+	res, err := r.session.Select("*").From("person").
+		Where("id BETWEEN ? AND ?", id, id+batchSize-1).LoadContext(ctx, &personList)
+
+	if err != nil {
+		return nil, fmt.Errorf("can't get person list: %w", err)
+	}
+
+	if res == 0 {
+		return nil, fmt.Errorf("person with range ID %d - %d doesn't exist", id, id+batchSize-1)
+	}
+
+	return personList, nil
 }
 
 func (r *PSQLRepo) Update(ctx context.Context, per *app.Person) error {

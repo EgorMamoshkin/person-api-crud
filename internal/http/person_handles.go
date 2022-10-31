@@ -22,6 +22,7 @@ func NewPersonHandler(e *echo.Echo, pu app.PersonLogic) {
 	e.POST("/person", handler.StorePerson)
 	e.PUT("/person", handler.UpdatePerson)
 	e.DELETE("/person/:id", handler.DeletePerson)
+	e.GET("/person/:offsetId/:batchSize", handler.GetPersonList)
 
 	log := logrus.New()
 
@@ -137,6 +138,33 @@ func (ph *PersonHandler) UpdatePerson(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, person)
+}
+
+func (ph *PersonHandler) GetPersonList(c echo.Context) error {
+	offsetID, err := strconv.Atoi(c.Param("offsetId"))
+	if err != nil {
+		logrus.Error(err)
+
+		return c.JSON(http.StatusBadRequest, err.Error())
+	}
+
+	batchSize, err := strconv.Atoi(c.Param("batchSize"))
+	if err != nil {
+		logrus.Error(err)
+
+		return c.JSON(http.StatusBadRequest, err.Error())
+	}
+
+	ctx := c.Request().Context()
+
+	personList, err := ph.personLogic.GetPersonList(ctx, offsetID, batchSize)
+	if err != nil {
+		logrus.Error(err)
+
+		return c.JSON(http.StatusNotImplemented, err.Error())
+	}
+
+	return c.JSON(http.StatusOK, personList)
 }
 
 func isRequestValid(p *app.Person) (bool, error) {

@@ -1,6 +1,8 @@
 package app
 
-import "context"
+import (
+	"context"
+)
 
 type Person struct {
 	Id        int    `json:"id"`
@@ -10,17 +12,19 @@ type Person struct {
 	LastName  string `json:"lastName" validate:"required"`
 }
 
+type PersonLogic interface {
+	StorePerson(ctx context.Context, per *Person) error
+	DeletePerson(ctx context.Context, id int) error
+	GetPersonByID(ctx context.Context, id int) (*Person, error)
+	UpdatePerson(ctx context.Context, per *Person) error
+	GetPersonList(ctx context.Context, offsetId int, batchSize int) ([]Person, error)
+}
+
 type PersonRepository interface {
 	Store(ctx context.Context, person *Person) error
 	Delete(ctx context.Context, id int) error
 	GetByID(ctx context.Context, id int) (*Person, error)
 	GetByEmail(ctx context.Context, email string, id int) (*Person, error)
 	Update(ctx context.Context, person *Person) error
-}
-
-type PersonLogic interface {
-	StorePerson(ctx context.Context, per *Person) error
-	DeletePerson(ctx context.Context, id int) error
-	GetPersonByID(ctx context.Context, id int) (*Person, error)
-	UpdatePerson(ctx context.Context, per *Person) error
+	GetPersonList(ctx context.Context, id int, batchSize int) ([]Person, error)
 }

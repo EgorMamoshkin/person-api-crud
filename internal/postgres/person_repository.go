@@ -47,7 +47,10 @@ func (r *PSQLRepo) Store(ctx context.Context, person *app.Person) error {
 
 	id, err := r.getID(ctx, person.Email)
 	if err != nil {
-		return err
+		time.Sleep(2 * time.Second)
+
+		id, _ = r.getID(ctx, person.Email)
+		person.Id = id
 	} else {
 		person.Id = id
 	}
@@ -60,6 +63,7 @@ func (r *PSQLRepo) Delete(ctx context.Context, id int) error {
 	if err != nil {
 		return fmt.Errorf("can't delete person: %w", err)
 	}
+
 	rowsDeleted, err := res.RowsAffected()
 	if err != nil {
 		return fmt.Errorf("can't confirm is person deleted: %w", err)

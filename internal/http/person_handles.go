@@ -15,8 +15,8 @@ type PersonHandler struct {
 	personLogic app.PersonLogic
 }
 
-func NewPersonHandler(e *echo.Echo, pu app.PersonLogic) {
-	handler := &PersonHandler{personLogic: pu}
+func NewPersonHandler(e *echo.Echo, pl app.PersonLogic) {
+	handler := &PersonHandler{personLogic: pl}
 
 	e.GET("/person/:id", handler.GetPerson)
 	e.POST("/person", handler.StorePerson)
